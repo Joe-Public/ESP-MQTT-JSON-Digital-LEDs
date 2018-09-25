@@ -31,6 +31,20 @@
 
 #include "config.h"
 
+int calculateVal(int step, int val, int i);
+int calculateStep(int prevValue, int endValue);
+void showleds();
+void addGlitter( fract8 chanceOfGlitter);
+void addGlitterColor( fract8 chanceOfGlitter, int red, int green, int blue);
+void Fire2012WithPalette();
+void fadeall();
+void temp2rgb(unsigned int kelvin);
+void setColor(int inR, int inG, int inB);
+void sendState();
+bool processJson(char* message);
+void callback(char* topic, byte* payload, unsigned int length);
+void setup_wifi();
+void setupStripedPalette( CRGB A, CRGB AB, CRGB B, CRGB BA);
 
 /****************************************FOR JSON***************************************/
 const int BUFFER_SIZE = JSON_OBJECT_SIZE(10);
