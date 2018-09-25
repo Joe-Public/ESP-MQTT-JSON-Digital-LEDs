@@ -785,6 +785,20 @@ void loop() {
   }
 
 
+  EVERY_N_MILLISECONDS(1) {
+    //EFFECT BLINK
+    if (effectString == "blink") {
+      setColor(realRed, realGreen, realBlue);
+      delay(500);
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds[i] = CRGB::Black;
+      }
+      showleds();
+      delay(500);
+    }
+  }
+
+
   EVERY_N_MILLISECONDS(10) {
 
     nblendPaletteTowardPalette(currentPalette, targetPalette, maxChanges);  // FOR NOISE ANIMATIon
