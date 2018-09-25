@@ -1,33 +1,24 @@
-/************ WIFI and MQTT Information (CHANGE THESE FOR YOUR SETUP) ******************/
-const char* ssid = "YourSSID"; //type your WIFI information inside the quotes
-const char* password = "YourWIFIpassword";
-const char* mqtt_server = "your.MQTT.server.ip";
-const char* mqtt_username = "yourMQTTusername";
-const char* mqtt_password = "yourMQTTpassword";
-const int mqtt_port = 1883;
+/************ WIFI settings ******************/
+#define SCAN_WIFI
+#define HOSTNAME "esp-porch"
+const char* KNOWN_SSID[] = {"YourSSID1", "YourSSID2"};
+const char* KNOWN_PASSWORD[] = {"YourWIFIpassword1", "YourWIFIpassword2"};
+const int KNOWN_SSID_COUNT = sizeof(KNOWN_SSID) / sizeof(KNOWN_SSID[0]); // number of known networks
 
+/************ MQTT settings ******************/
+#define MQTT_SERVER "YourMQTTserver"
+#define MQTT_USERNAME "YourMQTTusername"
+#define MQTT_PASSWORD "YourMQTTpassword"
+#define MQTT_PORT 1883
+#define MQTT_STATE_TOPIC "light/porch"
+#define MQTT_SET_TOPIC "light/porch/set"
 
+/************ OTA settings *******************/
+#define OTA_PASSWORD "YourOTApassword"
+#define OTA_PORT 8266
 
-/**************************** FOR OTA **************************************************/
-#define SENSORNAME "porch" //change this to whatever you want to call your device
-#define OTApassword "yourOTApassword" //the password you will need to enter to upload remotely via the ArduinoIDE
-int OTAport = 8266;
-
-
-
-/************* MQTT TOPICS (change these topics as you wish)  **************************/
-const char* light_state_topic = "bruh/porch";
-const char* light_set_topic = "bruh/porch/set";
-
-const char* on_cmd = "ON";
-const char* off_cmd = "OFF";
-const char* effect = "solid";
-String effectString = "solid";
-String oldeffectString = "solid";
-
-/*********************************** FastLED Defintions ********************************/
+/************ FastLED settings ***************/
 #define NUM_LEDS    186
 #define DATA_PIN    5
-//#define CLOCK_PIN 5
 #define CHIPSET     WS2811
 #define COLOR_ORDER BRG

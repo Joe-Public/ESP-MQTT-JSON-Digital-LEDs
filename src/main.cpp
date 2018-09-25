@@ -58,6 +58,12 @@ byte green = 255;
 byte blue = 255;
 byte brightness = 255;
 
+/****************************************FOR MQTT***************************************/
+const char* on_cmd = "ON";
+const char* off_cmd = "OFF";
+const char* effect = "solid";
+String effectString = "solid";
+String oldeffectString = "solid";
 
 
 /******************************** GLOBALS for fade/flash *******************************/
@@ -162,16 +168,16 @@ void setup() {
   gPal = HeatColors_p; //for FIRE
 
   setup_wifi();
-  client.setServer(mqtt_server, mqtt_port);
+  client.setServer(MQTT_SERVER, MQTT_PORT);
   client.setCallback(callback);
 
   //OTA SETUP
-  ArduinoOTA.setPort(OTAport);
+  ArduinoOTA.setPort(OTA_PORT);
   // Hostname defaults to esp8266-[ChipID]
-  ArduinoOTA.setHostname(SENSORNAME);
+  ArduinoOTA.setHostname(HOSTNAME);
 
   // No authentication by default
-  ArduinoOTA.setPassword((const char *)OTApassword);
+  ArduinoOTA.setPassword(OTA_PASSWORD);
 
   ArduinoOTA.onStart([]() {
     Serial.println("Starting");
@@ -203,15 +209,53 @@ void setup() {
 
 /********************************** START SETUP WIFI*****************************************/
 void setup_wifi() {
+  boolean wifiFound = false;
+  int i, n;
 
   delay(10);
+
+  #ifdef SCAN_WIFI
+    Serial.println(F("scan start"));
+    int nbVisibleNetworks = WiFi.scanNetworks();
+    Serial.println(F("scan done"));
+    if (nbVisibleNetworks == 0) {
+      Serial.println(F("no networks found. Reset to try again"));
+      while (true); // no need to go further, hang in there, will auto launch the Soft WDT reset
+    }
+
+    Serial.print(nbVisibleNetworks);
+    Serial.println(" network(s) found");
+
+    for (i = 0; i < nbVisibleNetworks; ++i) {
+      Serial.println(WiFi.SSID(i)); // Print current SSID
+      for (n = 0; n < KNOWN_SSID_COUNT; n++) { // walk through the list of known SSID and check for a match
+        if (strcmp(KNOWN_SSID[n], WiFi.SSID(i).c_str())) {
+          Serial.print(F("\tNot matching "));
+          Serial.println(KNOWN_SSID[n]);
+        } else { // we got a match
+          wifiFound = true;
+          break; // n is the network index we found
+        }
+      } // end for each known wifi SSID
+      if (wifiFound) break; // break from the "for each visible network" loop
+    } // end for each visible network
+
+    if (!wifiFound) {
+      Serial.println(F("no Known network identified. Reset to try again"));
+      while (true); // no need to go further, hang in there, will auto launch the Soft WDT reset
+    }
+  #else
+    n = 0;
+  #endif
+
   // We start by connecting to a WiFi network
   Serial.println();
   Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Serial.println(KNOWN_SSID[n]);
   
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  WiFi.hostname(HOSTNAME);
+  WiFi.begin(KNOWN_SSID[n], KNOWN_PASSWORD[n]);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -411,7 +455,7 @@ void sendState() {
   char buffer[root.measureLength() + 1];
   root.printTo(buffer, sizeof(buffer));
 
-  client.publish(light_state_topic, buffer, true);
+  client.publish(MQTT_STATE_TOPIC, buffer, true);
 }
 
 
@@ -422,9 +466,9 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect(SENSORNAME, mqtt_username, mqtt_password)) {
+    if (client.connect(HOSTNAME, MQTT_USERNAME, MQTT_PASSWORD)) {
       Serial.println("connected");
-      client.subscribe(light_set_topic);
+      client.subscribe(MQTT_SET_TOPIC);
       setColor(0, 0, 0);
       sendState();
     } else {
