@@ -59,7 +59,7 @@ bool stateOn = false;
 bool startFade = false;
 bool onbeforeflash = false;
 unsigned long lastLoop = 0;
-int transitionTime = 0;
+unsigned long transitionTime = 0;
 int effectSpeed = 0;
 bool inFade = false;
 int loopCount = 0;
@@ -68,7 +68,7 @@ int redVal, grnVal, bluVal;
 
 bool flash = false;
 bool startFlash = false;
-int flashLength = 0;
+unsigned long flashLength = 0;
 unsigned long flashStartTime = 0;
 byte flashRed = red;
 byte flashGreen = green;
@@ -241,7 +241,7 @@ void loop() {
     for ( int i = 0; i < NUM_LEDS; i++) { //9948
       leds[i] = ColorFromPalette(palette, gHue + (i * 2), beat - gHue + (i * 10));
     }
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 30;
     }
     showleds();
@@ -254,9 +254,6 @@ void loop() {
     fill_palette( leds, NUM_LEDS,
                   startIndex, 16, /* higher = narrower stripes */
                   currentPalettestriped, 255, LINEARBLEND);
-    if (transitionTime == 0 or transitionTime == NULL) {
-      transitionTime = 0;
-    }
     showleds();
   }
 
@@ -265,7 +262,7 @@ void loop() {
     fadeToBlackBy( leds, NUM_LEDS, 25);
     int pos = random16(NUM_LEDS);
     leds[pos] += CRGB(realRed + random8(64), realGreen, realBlue);
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 30;
     }
     showleds();
@@ -309,7 +306,7 @@ void loop() {
     leds[outer] = CRGB::Aqua;
     nscale8(leds, NUM_LEDS, fadeval);
 
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 30;
     }
     showleds();
@@ -318,7 +315,7 @@ void loop() {
   //EFFECT FIRE
   if (effectString == "fire") {
     Fire2012WithPalette();
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 150;
     }
     showleds();
@@ -330,7 +327,7 @@ void loop() {
   if (effectString == "glitter") {
     fadeToBlackBy( leds, NUM_LEDS, 20);
     addGlitterColor(80, realRed, realGreen, realBlue);
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 30;
     }
     showleds();
@@ -342,7 +339,7 @@ void loop() {
     for (int i = 0; i < 8; i++) {
       leds[beatsin16(i + 7, 0, NUM_LEDS - 1  )] |= CRGB(realRed, realGreen, realBlue);
     }
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 130;
     }
     showleds();
@@ -369,9 +366,6 @@ void loop() {
       delay(50 + random8(100));             // shorter delay between strokes
     }
     delay(random8(frequency) * 100);        // delay between strikes
-    if (transitionTime == 0 or transitionTime == NULL) {
-      transitionTime = 0;
-    }
     showleds();
   }
 
@@ -386,7 +380,7 @@ void loop() {
     int thathue = (thishuepolice + 160) % 255;
     leds[idexR] = CHSV(thishuepolice, thissat, 255);
     leds[idexB] = CHSV(thathue, thissat, 255);
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 30;
     }
     showleds();
@@ -412,7 +406,7 @@ void loop() {
         leds[i] = CHSV(0, 0, 0);
       }
     }
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 30;
     }
     showleds();
@@ -421,21 +415,21 @@ void loop() {
   //EFFECT RAINBOW
   if (effectString == "rainbow") {
     // FastLED's built-in rainbow generator
-    static uint8_t starthue = 0;    thishue++;
+    thishue++;
     fill_rainbow(leds, NUM_LEDS, thishue, deltahue);
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 130;
     }
     showleds();
   }
 
   //EFFECT RAINBOW WITH GLITTER
-  if (effectString == "rainbow with glitter") {               // FastLED's built-in rainbow generator with Glitter
-    static uint8_t starthue = 0;
+  if (effectString == "rainbow with glitter") {
+    // FastLED's built-in rainbow generator with Glitter
     thishue++;
     fill_rainbow(leds, NUM_LEDS, thishue, deltahue);
     addGlitter(80);
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 130;
     }
     showleds();
@@ -446,7 +440,7 @@ void loop() {
     fadeToBlackBy( leds, NUM_LEDS, 20);
     int pos = beatsin16(13, 0, NUM_LEDS - 1);
     leds[pos] += CRGB(realRed, realGreen, realBlue);
-    if (transitionTime == 0 or transitionTime == NULL) {
+    if (transitionTime == 0) {
       transitionTime = 150;
     }
     showleds();
@@ -471,10 +465,6 @@ void loop() {
     if ( random8() < DENSITY) {
       int j = random16(NUM_LEDS);
       if ( !leds[j] ) leds[j] = lightcolor;
-    }
-
-    if (transitionTime == 0 or transitionTime == NULL) {
-      transitionTime = 0;
     }
     showleds();
   }
@@ -507,9 +497,6 @@ void loop() {
       }
       dist += beatsin8(10, 1, 4);                                              // Moving along the distance (that random number we started out with). Vary it a bit with a sine wave.
       // In some sketches, I've used millis() instead of an incremented counter. Works a treat.
-      if (transitionTime == 0 or transitionTime == NULL) {
-        transitionTime = 0;
-      }
       showleds();
     }
 
@@ -535,7 +522,7 @@ void loop() {
           step ++;                                                         // Next step.
           break;
       }
-      if (transitionTime == 0 or transitionTime == NULL) {
+      if (transitionTime == 0) {
         transitionTime = 30;
       }
       showleds();

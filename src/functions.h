@@ -443,7 +443,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("] ");
 
   char message[length + 1];
-  for (int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++) {
     message[i] = (char)payload[i];
   }
   message[length] = '\0';
