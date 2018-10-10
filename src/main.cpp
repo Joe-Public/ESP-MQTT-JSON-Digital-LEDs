@@ -20,6 +20,9 @@
       - ArduinoJSON
 */
 
+#define MQTT_MAX_PACKET_SIZE 512
+#define FASTLED_INTERNAL
+
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
@@ -32,7 +35,6 @@
 
 /****************************************FOR JSON***************************************/
 const int BUFFER_SIZE = JSON_OBJECT_SIZE(10);
-#define MQTT_MAX_PACKET_SIZE 512
 
 byte realRed = 0;
 byte realGreen = 0;
